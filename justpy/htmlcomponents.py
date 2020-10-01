@@ -204,16 +204,17 @@ class WebPage:
         s = f'{s}{block_indent}</div>{ws}'
         return s
 
-    def react(self):
+    async def react(self):
         pass
 
     async def build_list(self):
         object_list = []
         async with scheduler() as ly:
-            self.react()
+            await self.react()
             await ly()
             for i, obj in enumerate(self.components):
-                obj.react(self.data)
+                await obj.react(self.data)
+                await ly()
                 d = obj.convert_object_to_dict()
                 object_list.append(d)
                 await ly()
@@ -549,7 +550,7 @@ class HTMLBaseComponent(JustpyBaseComponent):
             s = f'{s}/>{ws}'
         return s
 
-    def react(self, data):
+    async def react(self, data):
         return
 
     async def convert_object_to_dict(self):
@@ -716,7 +717,7 @@ class Div(HTMLBaseComponent):
         object_list = []
         async with scheduler() as ly:
             for i, obj in enumerate(self.components):
-                obj.react(self.data)
+                await obj.react(self.data)
                 d = await obj.convert_object_to_dict()
                 object_list.append(d)
                 ly()
@@ -1374,23 +1375,27 @@ class AutoTable(Table):
         self.values = []
         super().__init__(**kwargs)
 
-    def react(self, data):
+    async def react(self, data):
         self.set_class('table-auto')
         # First row of values is header
         if self.values:
             headers = self.values[0]
             thead = Thead(a=self)
             tr = Tr(a=thead)
-            for item in headers:
-                Th(text=item, classes=self.th_classes, a=tr)
-            tbody = Tbody(a=self)
-            for i, row in enumerate(self.values[1:]):
-                if i % 2 == 1:
-                    tr = Tr(classes=self.tr_even_classes, a=tbody)
-                else:
-                    tr = Tr(classes=self.tr_odd_classes, a=tbody)
-                for item in row:
-                    Td(text=item, classes=self.td_classes, a=tr)
+            async with scheduler() as ly:
+                for item in headers:
+                    Th(text=item, classes=self.th_classes, a=tr)
+                    ly()
+                tbody = Tbody(a=self)
+                for i, row in enumerate(self.values[1:]):
+                    if i % 2 == 1:
+                        tr = Tr(classes=self.tr_even_classes, a=tbody)
+                    else:
+                        tr = Tr(classes=self.tr_odd_classes, a=tbody)
+                    for item in row:
+                        Td(text=item, classes=self.td_classes, a=tr)
+                        ly()
+                    ly()
 
 
 get_tag = component_by_tag

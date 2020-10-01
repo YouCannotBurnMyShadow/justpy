@@ -131,7 +131,7 @@ class HighCharts(JustpyBaseComponent):
         for c in args:
             c.add_component(self)
 
-    def react(self, data):
+    async def react(self, data):
         pass
 
     def load_json(self, options_string):
