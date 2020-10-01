@@ -726,9 +726,10 @@ class Div(HTMLBaseComponent):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
             ly()
-        if hasattr(self, 'model'):
-            self.model_update()
-        d['object_props'] = await self.build_list()
+            if hasattr(self, 'model'):
+                self.model_update()
+            d['object_props'] = await self.build_list()
+            ly()
         if hasattr(self, 'text'):
             self.text = str(self.text)
             d['text'] = self.text
