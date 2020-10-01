@@ -41,7 +41,7 @@ class WebPage:
     highcharts_theme = None
     # One of ['avocado', 'dark-blue', 'dark-green', 'dark-unica', 'gray',
     # 'grid-light', 'grid', 'high-contrast-dark', 'high-contrast-light', 'sand-signika', 'skies', 'sunset']
-    allowed_events = ['click', 'visibilitychange', 'page_ready', 'result_ready']
+    allowed_events = {'click', 'visibilitychange', 'page_ready', 'result_ready'}
 
     def __init__(self, **kwargs):
         self.page_id = WebPage.next_page_id
@@ -270,7 +270,7 @@ class JustpyBaseComponent(Tailwind):
         self.events = []
         self.event_modifiers = Dict()
         self.transition = None
-        self.allowed_events = []
+        self.allowed_events = set()
 
     def initialize(self, **kwargs):
         for k, v in kwargs.items():
@@ -466,12 +466,12 @@ class HTMLBaseComponent(JustpyBaseComponent):
     # keyboard_events = ['keydown', 'keypress', 'keyup']
     # mouse_events = ['click', 'dblclick', 'mousedown', 'mousemove', 'mouseout', 'mouseover', 'mouseup', 'wheel',
     #                 'mouseenter', 'mouseleave']
-    # allowed_events = ['click', 'mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'input', 'change',
-    #                   'after', 'before', 'keydown', 'keyup', 'keypress', 'focus', 'blur']
+    # allowed_events = {'click', 'mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'input', 'change',
+    #                   'after', 'before', 'keydown', 'keyup', 'keypress', 'focus', 'blur'}
 
-    # allowed_events = ['click', 'mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'input', 'change',
+    # allowed_events = {'click', 'mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'input', 'change',
     #                   'after', 'before', 'keydown', 'keyup', 'keypress', 'focus', 'blur', 'submit',
-    #                   'dragstart', 'dragover', 'drop']
+    #                   'dragstart', 'dragover', 'drop'}
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -489,9 +489,9 @@ class HTMLBaseComponent(JustpyBaseComponent):
         self.directives = []
         self.data = {}
         self.drag_options = None
-        self.allowed_events = ['click', 'mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'input', 'change',
+        self.allowed_events = {'click', 'mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'input', 'change',
                                'after', 'before', 'keydown', 'keyup', 'keypress', 'focus', 'blur', 'submit',
-                               'dragstart', 'dragover', 'drop', 'click__out']
+                               'dragstart', 'dragover', 'drop', 'click__out'}
         self.events = []
         self.event_modifiers = Dict()
         self.additional_properties = []  # Additional fields to get from the JavasScript event object
@@ -522,7 +522,7 @@ class HTMLBaseComponent(JustpyBaseComponent):
 
     def add_event(self, event_type):
         if event_type not in self.allowed_events:
-            self.allowed_events.append(event_type)
+            self.allowed_events.add(event_type)
 
     def add_allowed_event(self, event_type):
         self.add_event(event_type)

@@ -148,8 +148,8 @@ When an element is bound to an event, the event name (of type string) is added t
 
 #### allowed_events
  
- * Type: `list`
- * Default: `['click', 'mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'input', 'change', 'after', 'before', 'keydown', 'keyup', 'keypress', 'focus', 'blur']`
+ * Type: `set`
+ * Default: `{'click', 'mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'input', 'change', 'after', 'before', 'keydown', 'keyup', 'keypress', 'focus', 'blur'}`
 
 If an event name is not in `allowed_events`, JustPy will generate an error if you try to bind to that event.
 You can use the `add_event` method to add an allowed event to the list.

@@ -39,7 +39,7 @@ class AgGrid(JustpyBaseComponent):
         super().__init__(**kwargs)
         for k, v in kwargs.items():
             self.__setattr__(k,v)
-        self.allowed_events = []
+        self.allowed_events = set()
         if type(self.options) != Dict:
             self.options = Dict(self.options)
         for com in ['a', 'add_to']:
@@ -60,7 +60,7 @@ class AgGrid(JustpyBaseComponent):
 
     def on(self, event_type, func):
         # https://www.ag-grid.com/javascript-grid-events/
-        self.allowed_events.append(event_type)
+        self.allowed_events.add(event_type)
         super().on(event_type, func)
 
     def add_to_page(self, wp: WebPage):

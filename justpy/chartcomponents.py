@@ -51,8 +51,8 @@ class HighCharts(JustpyBaseComponent):
         super().__init__(**kwargs)
         for k, v in kwargs.items():
             self.__setattr__(k,v)
-        self.allowed_events = ['tooltip', 'point_click', 'point_select', 'point_unselect', 'series_hide',
-                               'series_show', 'series_click']
+        self.allowed_events = {'tooltip', 'point_click', 'point_select', 'point_unselect', 'series_hide',
+                               'series_show', 'series_click'}
         for e in self.allowed_events:
             for prefix in ['', 'on', 'on_']:
                 if prefix + e in kwargs.keys():

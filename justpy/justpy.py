@@ -47,6 +47,7 @@ PORT = config('PORT', cast=int, default=8000)
 SSL_VERSION = config('SSL_VERSION', default=PROTOCOL_SSLv23)
 SSL_KEYFILE = config('SSL_KEYFILE', default='')
 SSL_CERTFILE = config('SSL_CERTFILE', default='')
+GZIP_MIDDLEWARE = config('GZIP_MIDDLEWARE', cast=bool, default=True)
 
 TEMPLATES_DIRECTORY = config('TEMPLATES_DIRECTORY', cast=str, default=current_dir + '/templates')
 STATIC_DIRECTORY = config('STATIC_DIRECTORY', cast=str, default=os.getcwd())
@@ -84,6 +85,8 @@ await logger_config(level=LOGGING_LEVEL, format='%(levelname)s %(module)s: %(mes
 
 app = Starlette(debug=DEBUG)
 app.mount(STATIC_ROUTE, StaticFiles(directory=STATIC_DIRECTORY), name=STATIC_NAME)
+if GZIP_MIDDLEWARE:
+    app.add_middleware(GZipMiddleware)
 app.mount('/templates', StaticFiles(directory=current_dir + '/templates'), name='templates')
 app.add_middleware(GZipMiddleware)
 if SSL_KEYFILE and SSL_CERTFILE:
@@ -387,8 +390,10 @@ async def handle_event(data_dict, com_type=0, page_event=False):
         return dict_to_send
 
 
-def justpy(func=None, *, start_server=True, websockets=True, host=HOST, port=PORT, startup=None, **kwargs):
+def justpy(func=None, *, start_server=True, websockets=True, host=None, port=None, startup=None, **kwargs):
     global func_to_run, startup_func, HOST, PORT
+    host = host or HOST
+    port = port or PORT
     HOST = host
     PORT = port
     if func:
