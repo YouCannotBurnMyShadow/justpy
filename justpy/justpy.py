@@ -18,6 +18,8 @@ from .routing import Route, SetRoute
 from .utilities import run_task, create_delayed_task
 import uvicorn, logging, uuid, sys, os, traceback, fnmatch
 from ssl import PROTOCOL_SSLv23
+from low_latency import *
+
 
 current_module = sys.modules[__name__]
 current_dir = os.path.dirname(current_module.__file__)
@@ -76,7 +78,8 @@ component_file_list = create_component_file_list()
 
 template_options = {'tailwind': TAILWIND, 'quasar': QUASAR, 'quasar_version': QUASAR_VERSION, 'highcharts': HIGHCHARTS, 'aggrid': AGGRID, 'aggrid_enterprise': AGGRID_ENTERPRISE,
                     'static_name': STATIC_NAME, 'component_file_list': component_file_list, 'no_internet': NO_INTERNET}
-logging.basicConfig(level=LOGGING_LEVEL, format='%(levelname)s %(module)s: %(message)s')
+
+await logger_config(level=LOGGING_LEVEL, format='%(levelname)s %(module)s: %(message)s')
 
 
 app = Starlette(debug=DEBUG)
@@ -119,6 +122,7 @@ async def justpy_startup():
 
 @app.route("/{path:path}")
 
+
 class Homepage(HTTPEndpoint):
 
     async def get(self, request):
@@ -138,7 +142,7 @@ class Homepage(HTTPEndpoint):
                 request.state.session_id = str(uuid.uuid4().hex)
                 request.session_id = request.state.session_id
                 new_cookie = True
-                logging.debug(f'New session_id created: {request.session_id}')
+                await log(logging.DEBUG, f'New session_id created: {request.session_id}')
         for route in Route.instances:
             func = route.matches(request['path'], request)
             if func:
@@ -163,54 +167,80 @@ class Homepage(HTTPEndpoint):
                         'display_url': load_page.display_url, 'dark': load_page.dark, 'title': load_page.title, 'redirect': load_page.redirect,
                         'highcharts_theme': load_page.highcharts_theme, 'debug': load_page.debug, 'events': load_page.events,
                         'favicon': load_page.favicon if load_page.favicon else FAVICON}
-        if load_page.use_cache:
-            page_dict = load_page.cache
-        else:
-            page_dict = load_page.build_list()
-        template_options['tailwind'] = load_page.tailwind
-        context = {'request': request, 'page_id': load_page.page_id, 'justpy_dict': json.dumps(page_dict, default=str),
-                   'use_websockets': json.dumps(WebPage.use_websockets), 'options': template_options, 'page_options': page_options,
-                   'html': load_page.html}
-        response = templates.TemplateResponse(load_page.template_file, context)
-        if SESSIONS and new_cookie:
-            cookie_value = cookie_signer.sign(request.state.session_id)
-            cookie_value = cookie_value.decode("utf-8")
-            response.set_cookie(SESSION_COOKIE_NAME, cookie_value, max_age=COOKIE_MAX_AGE, httponly=True)
-            for k, v in load_page.cookies.items():
-                response.set_cookie(k, v, max_age=COOKIE_MAX_AGE, httponly=True)
-        if LATENCY:
-            await asyncio.sleep(LATENCY/1000)
-        return response
+        async with scheduler() as ly:
+            if load_page.use_cache:
+                page_dict = load_page.cache
+            else:
+                page_dict = await load_page.build_list()
+            await ly()
+            template_options['tailwind'] = load_page.tailwind
+            
+            main_loop = asyncio.get_event_loop()
+            def jdumps_page_dict():
+                return json.dumps(page_dict, default=str)
+            curr_justpy_dict = await thread_pool_executor(main_loop, jdumps_page_dict)
+            await ly()
+            
+            def jdumps_websockets():
+                return json.dumps(WebPage.use_websockets)
+            curr_use_websockets = await thread_pool_executor(main_loop, jdumps_websockets)
+            await ly()
+            
+            context = {'request': request, 'page_id': load_page.page_id, 'justpy_dict': curr_justpy_dict,
+                    'use_websockets': curr_use_websockets, 'options': template_options, 'page_options': page_options,
+                    'html': load_page.html}
+            response = templates.TemplateResponse(load_page.template_file, context)
+            await ly()
+            if SESSIONS and new_cookie:
+                cookie_value = cookie_signer.sign(request.state.session_id)
+                cookie_value = cookie_value.decode("utf-8")
+                response.set_cookie(SESSION_COOKIE_NAME, cookie_value, max_age=COOKIE_MAX_AGE, httponly=True)
+                for k, v in load_page.cookies.items():
+                    await ly()
+                    response.set_cookie(k, v, max_age=COOKIE_MAX_AGE, httponly=True)
+            await ly()
+            if LATENCY:
+                await asyncio.sleep(LATENCY/1000)
+            return response
 
     async def post(self, request):
-        # Handles post method. Used in Ajax mode for events when websockets disabled
-        if request['path']=='/zzz_justpy_ajax':
-            data_dict = await request.json()
-            # {'type': 'event', 'event_data': {'event_type': 'beforeunload', 'page_id': 0}}
-            if data_dict['event_data']['event_type'] == 'beforeunload':
-                return await self.on_disconnect(data_dict['event_data']['page_id'])
+        async with scheduler() as ly:
+            # Handles post method. Used in Ajax mode for events when websockets disabled
+            if request['path']=='/zzz_justpy_ajax':
+                data_dict = await request.json()
+                # {'type': 'event', 'event_data': {'event_type': 'beforeunload', 'page_id': 0}}
+                if data_dict['event_data']['event_type'] == 'beforeunload':
+                    return await self.on_disconnect(data_dict['event_data']['page_id'])
 
-            session_cookie = request.cookies.get(SESSION_COOKIE_NAME)
-            if SESSIONS and session_cookie:
-                session_id = cookie_signer.unsign(session_cookie).decode("utf-8")
-                data_dict['event_data']['session_id'] = session_id
+                session_cookie = request.cookies.get(SESSION_COOKIE_NAME)
+                await ly()
+                if SESSIONS and session_cookie:
+                    session_id = cookie_signer.unsign(session_cookie).decode("utf-8")
+                    await ly()
+                    data_dict['event_data']['session_id'] = session_id
 
-            # data_dict['event_data']['session'] = request.session
-            msg_type = data_dict['type']
-            data_dict['event_data']['msg_type'] = msg_type
-            page_event = True if msg_type == 'page_event' else False
-            result = await handle_event(data_dict, com_type=1, page_event=page_event)
-            if result:
-                if LATENCY:
-                    await asyncio.sleep(LATENCY / 1000)
-                return JSONResponse(result)
-            else:
-                return JSONResponse(False)
+                # data_dict['event_data']['session'] = request.session
+                msg_type = data_dict['type']
+                data_dict['event_data']['msg_type'] = msg_type
+                page_event = True if msg_type == 'page_event' else False
+                result = await handle_event(data_dict, com_type=1, page_event=page_event)
+                if result:
+                    if LATENCY:
+                        await asyncio.sleep(LATENCY / 1000)
+                else:
+                    result = False
+                
+                result = JSONResponse(result)
+                await ly()
+                return result
 
     async def on_disconnect(self, page_id):
-        logging.debug(f'In disconnect Homepage')
-        await WebPage.instances[page_id].on_disconnect()  # Run the specific page disconnect function
-        return JSONResponse(False)
+        async with scheduler() as ly:
+            await log(logging.DEBUG, f'In disconnect Homepage')
+            await WebPage.instances[page_id].on_disconnect()  # Run the specific page disconnect function
+            result = JSONResponse(False)
+            await ly()
+            return result
 
 
 @app.websocket_route("/")
@@ -222,7 +252,7 @@ class JustpyEvents(WebSocketEndpoint):
         await websocket.accept()
         websocket.id = JustpyEvents.socket_id
         websocket.open = True
-        logging.debug(f'Websocket {JustpyEvents.socket_id} connected')
+        await log(logging.DEBUG, f'Websocket {JustpyEvents.socket_id} connected')
         JustpyEvents.socket_id += 1
         #Send back socket_id to page
         # await websocket.send_json({'type': 'websocket_update', 'data': websocket.id})
@@ -233,7 +263,7 @@ class JustpyEvents(WebSocketEndpoint):
         """
         Method to accept and act on data received from websocket
         """
-        logging.debug('%s %s',f'Socket {websocket.id} data received:', data)
+        await log(logging.DEBUG, '%s %s',f'Socket {websocket.id} data received:', data)
         data_dict = json.loads(data)
         msg_type = data_dict['type']
         # data_dict['event_data']['type'] = msg_type
@@ -292,19 +322,19 @@ class JustpyEvents(WebSocketEndpoint):
 async def handle_event(data_dict, com_type=0, page_event=False):
     # com_type 0: websocket, con_type 1: ajax
     connection_type = {0: 'websocket', 1: 'ajax'}
-    logging.info('%s %s %s', 'In event handler:', connection_type[com_type], str(data_dict))
+    await log(logging.INFO, '%s %s %s', 'In event handler:', connection_type[com_type], str(data_dict))
     event_data = data_dict['event_data']
     try:
         p = WebPage.instances[event_data['page_id']]
     except:
-        logging.warning('No page to load')
+        await log(logging.WARNING, 'No page to load')
         return
     event_data['page'] = p
     if com_type==0:
         event_data['websocket'] = WebPage.sockets[event_data['page_id']][event_data['websocket_id']]
     # The page_update event is generated by the reload_interval Ajax call
     if event_data['event_type'] == 'page_update':
-        build_list = p.build_list()
+        build_list = await p.build_list()
         return {'type': 'page_update', 'data': build_list}
 
     if page_event:
@@ -322,17 +352,17 @@ async def handle_event(data_dict, com_type=0, page_event=False):
             event_result = await c.run_event_function(event_data['event_type'], event_data, True)
         else:
             event_result = None
-            logging.debug('%s %s %s %s', c, 'has no ', event_data['event_type'], ' event handler')
-        logging.debug('%s %s', 'Event result:', event_result)
+            await log(logging.DEBUG, '%s %s %s %s', c, 'has no ', event_data['event_type'], ' event handler')
+        await log(logging.DEBUG, '%s %s', 'Event result:', event_result)
     except Exception as e:
         # raise Exception(e)
         if CRASH:
             print(traceback.format_exc())
             sys.exit(1)
         event_result = None
-        # logging.info('%s %s', 'Event result:', '\u001b[47;1m\033[93mAttempting to run event handler:' + str(e) + '\033[0m')
-        logging.info('%s %s', 'Event result:', '\u001b[47;1m\033[93mError in event handler:\033[0m')
-        logging.info('%s', traceback.format_exc())
+        # await log(logging.INFO, '%s %s', 'Event result:', '\u001b[47;1m\033[93mAttempting to run event handler:' + str(e) + '\033[0m')
+        await log(logging.INFO, '%s %s', 'Event result:', '\u001b[47;1m\033[93mError in event handler:\033[0m')
+        await log(logging.INFO, '%s', traceback.format_exc())
 
 
     # If page is not to be updated, the event_function should return anything but None
@@ -343,7 +373,7 @@ async def handle_event(data_dict, com_type=0, page_event=False):
                 await asyncio.sleep(LATENCY / 1000)
             await p.update()
         elif com_type == 1:   # Ajax communication
-            build_list = p.build_list()
+            build_list = await p.build_list()
     try:
         after_result = await c.run_event_function('after', event_data, True)
     except:
@@ -385,15 +415,18 @@ def justpy(func=None, *, start_server=True, websockets=True, host=HOST, port=POR
     return func_to_run
 
 
-def convert_dict_to_object(d):
-    obj = globals()[d['class_name']]()
-    for obj_prop in d['object_props']:
-        obj.add(convert_dict_to_object(obj_prop))
-    # combine the dictionaries
-    for k,v in {**d, **d['attrs']}.items():
-        if k != 'id':
-            obj.__dict__[k] = v
-    return obj
+async def convert_dict_to_object(d):
+    async with scheduler() as ly:
+        obj = globals()[d['class_name']]()
+        ly()
+        for obj_prop in d['object_props']:
+            obj.add(await convert_dict_to_object(obj_prop))
+            ly()
+        # combine the dictionaries
+        for k,v in {**d, **d['attrs']}.items():
+            if k != 'id':
+                obj.__dict__[k] = v
+        return obj
 
 
 def redirect(url):

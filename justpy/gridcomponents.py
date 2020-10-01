@@ -106,7 +106,7 @@ class AgGrid(JustpyBaseComponent):
         await page.run_javascript(f"""cached_grid_def['g' + {self.id}].api.deselectAll()""")
 
 
-    def convert_object_to_dict(self):
+    async def convert_object_to_dict(self):
 
         d = {}
         d['vue_type'] = self.vue_type

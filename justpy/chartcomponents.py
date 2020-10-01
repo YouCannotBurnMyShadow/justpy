@@ -143,7 +143,7 @@ class HighCharts(JustpyBaseComponent):
             self.options = Dict(demjson.decode(f.read().encode("ascii", "ignore")))
         return self.options
 
-    def convert_object_to_dict(self):
+    async def convert_object_to_dict(self):
 
         d = {}
         d['vue_type'] = self.vue_type
