@@ -1,4 +1,4 @@
-__all__ = ['LogLevel', 'logger_config', 'set_logger_config', 'logger', 'set_logger', 'scheduler', 'set_scheduler', 'thread_pool_executor', 'set_thread_pool_executor']
+__all__ = ['logger_config', 'set_logger_config', 'log', 'set_logger', 'scheduler', 'set_scheduler', 'thread_pool_executor', 'set_thread_pool_executor']
 
 from async_generator import asynccontextmanager, async_generator, yield_
 from enum import Enum
