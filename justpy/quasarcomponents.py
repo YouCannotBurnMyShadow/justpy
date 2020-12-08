@@ -61,8 +61,8 @@ class _QInputBase(Input):
         self.vue_type = 'quasar_component'
         self.directives = quasar_directives
         self.disable_events = False
-        self.prop_list = []
-        self.attributes = []
+        self.prop_list = set()
+        self.attributes = set()
 
     def __setattr__(self, key, value):
         if key == 'options':
@@ -111,12 +111,12 @@ class QInput(_QInputBase):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['mask', 'fill-mask', 'unmasked-value', 'error', 'error-message', 'rules', 'lazy-rules',
+        self.prop_list = {'mask', 'fill-mask', 'unmasked-value', 'error', 'error-message', 'rules', 'lazy-rules',
                           'label', 'stack-label', 'hint', 'hide-hint', 'prefix', 'suffix', 'color', 'bg-color', 'dark',
                           'filled', 'outlined', 'borderless', 'standout', 'bottom-slots', 'rounded', 'square', 'dense',
                           'items-aligned', 'disable', 'readonly', 'value', 'type', 'debounce', 'counter', 'maxlength',
                           'autogrow', 'autofocus', 'input-class', 'input-style', 'clearable', 'clear-icon',
-                          'placeholder']
+                          'placeholder'}
 
         self.allowed_events = {'keypress', 'input', 'focus', 'blur', 'change'}  # Not different from focus and blur in documentation
         self.set_keyword_events(**kwargs)
@@ -177,7 +177,7 @@ class QSelect(_QInputBase):
         super().__init__(**kwargs)
         self.type = 'object'
         self.value = kwargs.get('value', None)
-        self.prop_list = ['color', 'bg-color', 'dark', 'filled', 'outlined', 'borderless', 'standout', 'hide-bottom-space',
+        self.prop_list = {'color', 'bg-color', 'dark', 'filled', 'outlined', 'borderless', 'standout', 'hide-bottom-space',
                  'rounded','square', 'dense', 'popup-content-class', 'popup-content-style',
                  'error', 'rules', 'lazy-rules', 'loading', 'clearable', 'autofocus', 'hide-dropdown-icon',
                  'fill-input', 'new-value-mode', 'transition-show', 'transition-hide',
@@ -188,7 +188,7 @@ class QSelect(_QInputBase):
                  'options-selected-class', 'options-cover', 'options-sanitize', 'map-options',
                  'display-value', 'display-value-sanitize', 'hide-selected', 'max-values', 'use-chips',
                  'disable', 'readonly', 'behavior', 'input-class', 'input-style',
-                  'virtual-scroll-slice-size', 'virtual-scroll-item-size', 'virtual-scroll-sticky-size-start', 'virtual-scroll-sticky-size-end']
+                  'virtual-scroll-slice-size', 'virtual-scroll-item-size', 'virtual-scroll-sticky-size-start', 'virtual-scroll-sticky-size-end'}
 
         self.allowed_events = {'input', 'remove', 'add', 'new_value', 'filter', 'filter_abort', 'focus', 'blur'}
         # self.set_keyword_events(**kwargs)
@@ -209,8 +209,8 @@ class QOptionGroup(_QInputBase):
         else:
             self.type = 'radio'
             self.value = kwargs.get('value', '')
-        self.prop_list = ['keep-color', 'type', 'left-label', 'inline', 'value', 'options', 'disable',
-                          'size', 'color', 'dark', 'dense']
+        self.prop_list = {'keep-color', 'type', 'left-label', 'inline', 'value', 'options', 'disable',
+                          'size', 'color', 'dark', 'dense'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -241,9 +241,9 @@ class QBtnToggle(_QInputBase):
         super().__init__(**kwargs)
         self.type = 'object'
         self.value = kwargs.get('value', None)
-        self.prop_list = ['spread', 'no-caps', 'no-wrap', 'stack', 'stretch', 'value', 'options', 'readonly', 'disable',
+        self.prop_list = {'spread', 'no-caps', 'no-wrap', 'stack', 'stretch', 'value', 'options', 'readonly', 'disable',
                           'ripple', 'color', 'text-color', 'toggle-color', 'toggle-text-color', 'outline', 'flat',
-                          'unelevated', 'rounded', 'push', 'glossy', 'size', 'dense', 'clearable']
+                          'unelevated', 'rounded', 'push', 'glossy', 'size', 'dense', 'clearable'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -260,8 +260,8 @@ class QSlider(_QInputBase):
         self.value = kwargs.get('value', 0)
         # The label suffix is a stop gap till full label-value prop implemented
         self.label_suffix = kwargs.get('label_suffix', '')
-        self.prop_list = ['label-always', 'snap', 'label', 'label-value', 'label-always', 'markers', 'tabindex',
-                          'value', 'min', 'max', 'step', 'disable', 'readonly', 'color', 'label-color', 'dark', 'dense']
+        self.prop_list = {'label-always', 'snap', 'label', 'label-value', 'label-always', 'markers', 'tabindex',
+                          'value', 'min', 'max', 'step', 'disable', 'readonly', 'color', 'label-color', 'dark', 'dense'}
         self.allowed_events = {'input', 'change'}
         # self.set_keyword_events(**kwargs)
 
@@ -287,10 +287,10 @@ class QRange(_QInputBase):
         self.value = kwargs.get('value', {'min': 0, 'max': 100})
         # The label suffix is a stop gap till full label-value prop implemented
         self.label_suffix = kwargs.get('label_suffix', '')
-        self.prop_list = ['drag-range', 'drag-range-only', 'left-label-color', 'right-label-color', 'left-label-value',
+        self.prop_list = {'drag-range', 'drag-range-only', 'left-label-color', 'right-label-color', 'left-label-value',
                           'right-label-value',
                           'label-always', 'snap', 'label', 'label-always', 'markers', 'tabindex',
-                          'value', 'min', 'max', 'step', 'disable', 'readonly', 'color', 'dark', 'dense']
+                          'value', 'min', 'max', 'step', 'disable', 'readonly', 'color', 'dark', 'dense'}
         self.allowed_events = {'input', 'change'}
 
         # self.set_keyword_events(**kwargs)
@@ -315,8 +315,8 @@ class QRating(_QInputBase):
         self.no_reset = False
         super().__init__(**kwargs)
         self.debounce = 30
-        self.prop_list = ['icon', 'max', 'value', 'no-reset', 'readonly', 'disable', 'color', 'size', 'icon-selected',
-                          'icon-half', 'no-dimming', 'color-selected', 'color-half']
+        self.prop_list = {'icon', 'max', 'value', 'no-reset', 'readonly', 'disable', 'color', 'size', 'icon-selected',
+                          'icon-half', 'no-dimming', 'color-selected', 'color-half'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -344,9 +344,9 @@ class QTime(_QInputBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Options prop not supported and left out from list. It is a function
-        self.prop_list = ['landscape', 'format24h', 'options', 'hour-options', 'minute-options', 'second-options',
+        self.prop_list = {'landscape', 'format24h', 'options', 'hour-options', 'minute-options', 'second-options',
                           'with-seconds', 'now-btn', 'value', 'mask', 'locale', 'calendar', 'readonly', 'disable',
-                          'color', 'text-color', 'dark', 'square', 'flat', 'bordered']
+                          'color', 'text-color', 'dark', 'square', 'flat', 'bordered'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -360,11 +360,11 @@ class QDate(_QInputBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # Options prop not supported and left out from list. It is a function
-        self.prop_list = ['landscape', 'title', 'subtitle', 'today-btn', 'minimal', 'readonly', 'disable',
+        self.prop_list = {'landscape', 'title', 'subtitle', 'today-btn', 'minimal', 'readonly', 'disable',
                           'color', 'text-color', 'dark', 'event-color', 'value', 'mask', 'locale', 'calendar',
                           'emit-immediately', 'default-year-month', 'default-view',
                           'events-date', 'options-date',
-                          'first-day-of-week', 'square', 'flat', 'bordered']
+                          'first-day-of-week', 'square', 'flat', 'bordered'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -394,9 +394,9 @@ class QCheckbox(_QInputBase):
         super().__init__(**kwargs)
         self.type = 'object'
         self.value = kwargs.get('value', False)
-        self.prop_list = ['keep-color', 'indeterminate-value', 'toggle-indeterminate', 'tabindex', 'label',
+        self.prop_list = {'keep-color', 'indeterminate-value', 'toggle-indeterminate', 'tabindex', 'label',
                           'left-label', 'name', 'toggle-order', 'value', 'val', 'true-value', 'false-value', 'disable',
-                          'color', 'dark', 'dense', 'size']
+                          'color', 'dark', 'dense', 'size'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -418,9 +418,9 @@ class QToggle(_QInputBase):
         self.debounce = 50
         self.type = 'object'
         self.value = kwargs.get('value', False)
-        self.prop_list = ['keep-color', 'icon', 'checked-icon', 'unchecked-icon', 'tabindex',
+        self.prop_list = {'keep-color', 'icon', 'checked-icon', 'unchecked-icon', 'tabindex',
                           'label', 'left-label', 'value', 'val', 'true-value', 'false-value', 'disable', 'color',
-                          'dark', 'dense', 'size']
+                          'dark', 'dense', 'size'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -440,7 +440,7 @@ class QForm(QDiv):
     def __init__(self, **kwargs):
 
         super().__init__(**kwargs)
-        self.prop_list = ['autofocus', 'no-error-focus', 'no-reset-focus', 'greedy']
+        self.prop_list = {'autofocus', 'no-error-focus', 'no-reset-focus', 'greedy'}
         self.allowed_events = {'submit', 'before'}
 
         def default_submit(self, msg):
@@ -461,7 +461,7 @@ class QAvatar(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['icon', 'size', 'font-size', 'color', 'text-color', 'square', 'rounded']
+        self.prop_list = {'icon', 'size', 'font-size', 'color', 'text-color', 'square', 'rounded'}
 
 
 @parse_dict
@@ -472,7 +472,7 @@ class QAjaxBar(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['skip-hijack', 'reverse', 'position', 'size', 'color']
+        self.prop_list = {'skip-hijack', 'reverse', 'position', 'size', 'color'}
         self.allowed_events = {'start', 'stop'}
         self.set_keyword_events(**kwargs)
 
@@ -485,7 +485,7 @@ class QBadge(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['color', 'text-color', 'floating', 'transparent', 'multi-line', 'label', 'align']
+        self.prop_list = {'color', 'text-color', 'floating', 'transparent', 'multi-line', 'label', 'align'}
 
 
 @parse_dict
@@ -496,7 +496,7 @@ class QBanner(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['inline-actions', 'dense', 'rounded']
+        self.prop_list = {'inline-actions', 'dense', 'rounded'}
 
 
 @parse_dict
@@ -507,7 +507,7 @@ class QBar(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['dense', 'dark']
+        self.prop_list = {'dense', 'dark'}
 
 
 @parse_dict
@@ -518,7 +518,7 @@ class QToolbar(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['inset']
+        self.prop_list = {'inset'}
 
 
 @parse_dict
@@ -529,7 +529,7 @@ class QToolbarTitle(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['shrink']
+        self.prop_list = {'shrink'}
 
 
 @parse_dict
@@ -541,7 +541,7 @@ class QBreadcrumbs(QDiv):
     def __init__(self, **kwargs):
         self.separator = '/'
         super().__init__(**kwargs)
-        self.prop_list = ['separator', 'active-color', 'gutter', 'separator-color', 'align']
+        self.prop_list = {'separator', 'active-color', 'gutter', 'separator-color', 'align'}
         self.separator = 'h'
         self.separator_color = 'primary'
 
@@ -554,7 +554,7 @@ class QBreadcrumbsEl(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['to', 'exact', 'append', 'replace', 'active-class', 'exact-active-class', 'label', 'icon']
+        self.prop_list = {'to', 'exact', 'append', 'replace', 'active-class', 'exact-active-class', 'label', 'icon'}
 
 
 @parse_dict
@@ -566,10 +566,10 @@ class QBtn(QDiv):
     def __init__(self, **kwargs):
         self.loading = False
         super().__init__(**kwargs)
-        self.prop_list = ['ripple', 'type', 'to', 'replace', 'label', 'icon', 'icon-right', 'round', 'outline', 'flat',
+        self.prop_list = {'ripple', 'type', 'to', 'replace', 'label', 'icon', 'icon-right', 'round', 'outline', 'flat',
                           'unelevated', 'rounded', 'push', 'glossy', 'size', 'fab', 'fab-mini', 'color', 'text-color',
                           'no-caps', 'no-wrap', 'dense', 'tabindex', 'align', 'stack', 'stretch', 'loading', 'disable',
-                          'percentage', 'dark-percentage', 'href', 'target', 'download']
+                          'percentage', 'dark-percentage', 'href', 'target', 'download'}
 
 
 QButton = QBtn
@@ -582,7 +582,7 @@ class QBtnGroup(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['spread', 'stretch', 'outline', 'flat', 'unelevated', 'rounded', 'push', 'glossy']
+        self.prop_list = {'spread', 'stretch', 'outline', 'flat', 'unelevated', 'rounded', 'push', 'glossy'}
 
 
 @parse_dict
@@ -596,12 +596,12 @@ class QBtnDropdown(_QInputBase):
         super().__init__(**kwargs)
         self.type = 'boolean'
         self.value = bool(self.value)
-        self.prop_list = ['loading', 'split', 'disable-main-btn', 'disable-dropdown', 'persistent', 'auto-close',
+        self.prop_list = {'loading', 'split', 'disable-main-btn', 'disable-dropdown', 'persistent', 'auto-close',
                           'label', 'icon', 'icon-right', 'no-caps', 'no-wrap', 'align', 'stack', 'stretch','dropdown-icon',
                           'type', 'tabindex', 'value', 'cover', 'menu-anchor', 'menu-self', 'to', 'replace', 'disable',
                           'ripple', 'round', 'outline', 'flat', 'unelevated', 'rounded', 'push', 'size', 'fab',
                           'fab-mini',
-                          'color', 'text-color', 'dense', 'content-style', 'content-class']
+                          'color', 'text-color', 'dense', 'content-style', 'content-class'}
         self.allowed_events = {'input', 'show', 'before_show', 'hide', 'before_hide', 'click'}
         self.set_keyword_events(**kwargs)
 
@@ -616,11 +616,11 @@ class QMenu(_QInputBase):
         super().__init__(**kwargs)
         self.type = 'boolean'
         self.value = bool(self.value)
-        self.prop_list = ['target', 'context-menu', 'fit', 'no-parent-event', 'touch-position', 'persistent',
+        self.prop_list = {'target', 'context-menu', 'fit', 'no-parent-event', 'touch-position', 'persistent',
                           'auto-close',
                           'no-focus', 'transition-show', 'transition-hide', 'value', 'cover', 'anchor', 'self',
                           'offset',
-                          'content-class', 'content-style', 'square', 'max-height', 'max-width']
+                          'content-class', 'content-style', 'square', 'max-height', 'max-width'}
         self.allowed_events = {'input', 'show', 'before_show', 'hide', 'before_hide', 'escape_key'}
         self.set_keyword_events(**kwargs)
 
@@ -633,7 +633,7 @@ class QCard(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['dark', 'square', 'flat', 'bordered']
+        self.prop_list = {'dark', 'square', 'flat', 'bordered'}
 
 
 @parse_dict
@@ -644,7 +644,7 @@ class QCardSection(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['horizontal']
+        self.prop_list = {'horizontal'}
 
 
 @parse_dict
@@ -655,7 +655,7 @@ class QCardActions(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['align', 'vertical']
+        self.prop_list = {'align', 'vertical'}
 
 
 @parse_dict
@@ -667,9 +667,9 @@ class QTabs(_QInputBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.value = kwargs.get('value', '')
-        self.prop_list = ['breakpoint', 'vertical', 'align', 'left-icon', 'right-icon', 'shrink', 'switch-indicator',
+        self.prop_list = {'breakpoint', 'vertical', 'align', 'left-icon', 'right-icon', 'shrink', 'switch-indicator',
                           'narrow-indicator', 'inline-label', 'no-caps', 'value', 'active-color', 'active-bg-color',
-                          'indicator-color', 'dense']
+                          'indicator-color', 'dense'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -682,7 +682,7 @@ class QTab(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['icon', 'label', 'alert', 'no-caps', 'name', 'tabindex', 'disable', 'ripple']
+        self.prop_list = {'icon', 'label', 'alert', 'no-caps', 'name', 'tabindex', 'disable', 'ripple'}
 
 
 @parse_dict
@@ -694,7 +694,7 @@ class QTabPanels(_QInputBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.value = kwargs.get('value', '')
-        self.prop_list = ['keep-alive', 'animated', 'infinite', 'swipeable', 'transition-prev', 'transition-next', 'value']
+        self.prop_list = {'keep-alive', 'animated', 'infinite', 'swipeable', 'transition-prev', 'transition-next', 'value'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -707,7 +707,7 @@ class QTabPanel(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['name', 'disable']
+        self.prop_list = {'name', 'disable'}
 
 
 @parse_dict
@@ -721,8 +721,8 @@ class QSplitter(_QInputBase):
         self.value = kwargs.get('value', 50.0)
         self.limits = kwargs.get('limits', [0, 100])
         self.type = 'float'
-        self.prop_list = ['horizontal', 'limits', 'value', 'disable', 'before-class', 'after-class', 'separator-class',
-                          'separator-style', 'dark']
+        self.prop_list = {'horizontal', 'limits', 'value', 'disable', 'before-class', 'after-class', 'separator-class',
+                          'separator-style', 'dark'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -737,8 +737,8 @@ class QKnob(_QInputBase):
         super().__init__(**kwargs)
         self.value = kwargs.get('value', 0)
         self.type = 'float'
-        self.prop_list = ['show-value', 'angle', 'tabindex', 'value', 'min', 'max', 'step', 'disable', 'readonly',
-                          'color', 'center-color', 'track-color', 'size', 'font-size', 'thickness']
+        self.prop_list = {'show-value', 'angle', 'tabindex', 'value', 'min', 'max', 'step', 'disable', 'readonly',
+                          'color', 'center-color', 'track-color', 'size', 'font-size', 'thickness'}
         self.allowed_events = {'input', 'change', 'drag_value'}
         self.set_keyword_events(**kwargs)
 
@@ -753,9 +753,9 @@ class QPagination(_QInputBase):
         super().__init__(**kwargs)
         self.value = kwargs.get('value', 1)
         self.type = 'float'
-        self.prop_list = ['input', 'boundary-links', 'direction-links', 'boundary-numbers', 'ellipses', 'value', 'min',
+        self.prop_list = {'input', 'boundary-links', 'direction-links', 'boundary-numbers', 'ellipses', 'value', 'min',
                           'max', 'max-pages', 'disable', 'color', 'text-color', 'input-style', 'input-class', 'size',
-                          'icon-prev', 'icon-next', 'icon-first', 'icon-last', 'ripple']
+                          'icon-prev', 'icon-next', 'icon-first', 'icon-last', 'ripple'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -769,8 +769,8 @@ class QChatMessage(QDiv):
     def __init__(self, **kwargs):
 
         super().__init__(**kwargs)
-        self.prop_list = ['label-sanitize', 'name-sanitize', 'text-sanitize', 'stamp-sanitize', 'sent', 'label',
-                          'name', 'avatar', 'text', 'stamp', 'bg-color', 'text-color', 'size']
+        self.prop_list = {'label-sanitize', 'name-sanitize', 'text-sanitize', 'stamp-sanitize', 'sent', 'label',
+                          'name', 'avatar', 'text', 'stamp', 'bg-color', 'text-color', 'size'}
 
 
     async def convert_object_to_dict(self):
@@ -793,8 +793,8 @@ class QChip(QDiv):
     def __init__(self, **kwargs):
         self.selected = None
         super().__init__(**kwargs)
-        self.prop_list = ['icon', 'icon-right', 'label', 'tabindex', 'value', 'selected', 'clickable', 'removable',
-                          'disable', 'ripple', 'dense', 'color', 'text-color', 'square', 'outline']
+        self.prop_list = {'icon', 'icon-right', 'label', 'tabindex', 'value', 'selected', 'clickable', 'removable',
+                          'disable', 'ripple', 'dense', 'color', 'text-color', 'square', 'outline'}
         self.allowed_events = {'update:selected', 'click', 'remove'}
         self.set_keyword_events(**kwargs)
 
@@ -827,9 +827,9 @@ class QCircularProgress(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['indeterminate', 'show-value', 'reverse', 'angle', 'value', 'min', 'max', 'color',
+        self.prop_list = {'indeterminate', 'show-value', 'reverse', 'angle', 'value', 'min', 'max', 'color',
                           'center-color',
-                          'track-color', 'size', 'font-size', 'thickness']
+                          'track-color', 'size', 'font-size', 'thickness'}
 
 
 @parse_dict
@@ -840,8 +840,8 @@ class QLinearProgress(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['buffer', 'reverse', 'indeterminate', 'query', 'stripe', 'value', 'color', 'track-color',
-                          'dark', 'rounded']
+        self.prop_list = {'buffer', 'reverse', 'indeterminate', 'query', 'stripe', 'value', 'color', 'track-color',
+                          'dark', 'rounded'}
 
 
 @parse_dict
@@ -854,8 +854,8 @@ class QColor(_QInputBase):
         self.value = ''
         self.format_model = 'hex'
         super().__init__(**kwargs)
-        self.prop_list = ['default-view', 'no-header', 'no-footer', 'value', 'default-value', 'format-model',
-                          'disable', 'readonly', 'dark']
+        self.prop_list = {'default-view', 'no-header', 'no-footer', 'value', 'default-value', 'format-model',
+                          'disable', 'readonly', 'dark'}
         self.allowed_events = {'input', 'change'}
         # self.set_keyword_events(**kwargs)
 
@@ -869,23 +869,23 @@ class QPopupProxy(_QInputBase):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.value = kwargs.get('value', False)
-        # self.prop_list = ['target', 'context-menu', 'breakpoint', 'value']
-        # self.qdialog_prop_list = ['persistent', 'no-esc-dsimiss', 'no-backdrop-dismiss', 'no-route-dismiss',
+        # self.prop_list = {'target', 'context-menu', 'breakpoint', 'value'}
+        # self.qdialog_prop_list = {'persistent', 'no-esc-dsimiss', 'no-backdrop-dismiss', 'no-route-dismiss',
         #                           'auto-close',
         #                           'transition-show', 'transition-hide', 'no-refocus', 'no-focus', 'seamless',
         #                           'maximized',
         #                           'full-width', 'full-height', 'position', 'value', 'content-class', 'content-style',
-        #                           'square']
-        # self.qmenu_prop_list = ['target', 'context-menu', 'fit', 'no-parent-event', 'touch-position', 'persistent',
+        #                           'square'}
+        # self.qmenu_prop_list = {'target', 'context-menu', 'fit', 'no-parent-event', 'touch-position', 'persistent',
         #                         'auto-close', 'no-focus', 'transition-show', 'transition-hide', 'value', 'cover',
         #                         'anchor', 'self',
-        #                         'offset', 'content-class', 'content-style', 'square', 'max-height', 'max-width']
+        #                         'offset', 'content-class', 'content-style', 'square', 'max-height', 'max-width'}
         # Union of all three. QDialog and QMenu props are passed through
-        self.prop_list = ['touch-position', 'context-menu', 'max-width', 'no-route-dismiss', 'content-style', 'full-width',
+        self.prop_list = {'touch-position', 'context-menu', 'max-width', 'no-route-dismiss', 'content-style', 'full-width',
              'max-height', 'no-esc-dsimiss', 'cover', 'no-parent-event', 'square', 'no-backdrop-dismiss', 'value',
              'transition-hide', 'breakpoint', 'content-class', 'seamless', 'transition-show', 'fit', 'no-focus',
              'auto-close', 'position', 'full-height', 'self', 'maximized', 'offset', 'anchor', 'no-refocus', 'target',
-             'persistent']
+             'persistent'}
         self.allowed_events = {'input', 'show', 'before_show', 'hide', 'before_hide', 'escape_key'}
         self.set_keyword_events(**kwargs)
 
@@ -901,9 +901,9 @@ class QDialog(_QInputBase):
 
         self.type = 'boolean'
         self.value = bool(self.value)
-        self.prop_list = ['persistent', 'no-esc-dsimiss', 'no-backdrop-dismiss', 'no-route-dismiss', 'auto-close',
+        self.prop_list = {'persistent', 'no-esc-dsimiss', 'no-backdrop-dismiss', 'no-route-dismiss', 'auto-close',
                           'transition-show', 'transition-hide', 'no-refocus', 'no-focus', 'seamless', 'maximized',
-                          'full-width', 'full-height', 'position', 'value', 'content-class', 'content-style', 'square']
+                          'full-width', 'full-height', 'position', 'value', 'content-class', 'content-style', 'square'}
         self.allowed_events = {'input', 'show', 'before_show', 'hide', 'before_hide', 'escape_key'}
         self.set_keyword_events(**kwargs)
 
@@ -920,8 +920,8 @@ class QTooltip(_QInputBase):
         self.disable_events = True  # For tooltips, events are disabled by default otherwise input event occurs every time tooltip shows.
         self.type = 'boolean'
         self.value = bool(self.value)
-        self.prop_list = ['transition-show', 'transition-hide', 'target', 'delay', 'max-height', 'max-width', 'value',
-                          'anchor', 'self', 'offset', 'content-class', 'content-style', 'hide-delay']
+        self.prop_list = {'transition-show', 'transition-hide', 'target', 'delay', 'max-height', 'max-width', 'value',
+                          'anchor', 'self', 'offset', 'content-class', 'content-style', 'hide-delay'}
         self.allowed_events = {'input', 'show', 'before_show', 'hide', 'before_hide', 'before'}
         self.set_keyword_events(**kwargs)
 
@@ -936,10 +936,10 @@ class QStepper(_QInputBase):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['keep-alive', 'animated', 'infinite', 'swipeable', 'transition-prev', 'transition-next',
+        self.prop_list = {'keep-alive', 'animated', 'infinite', 'swipeable', 'transition-prev', 'transition-next',
                                'vertical', 'header-nav', 'value', 'dark', 'flat', 'bordered',
                                'alternative-labels', 'contracted', 'inactive-icon', 'inactive-color', 'done-icon', 'done-color',
-                               'active-icon', 'active-color', 'error-icon', 'error-color']
+                               'active-icon', 'active-color', 'error-icon', 'error-color'}
         self.allowed_events = {'input', 'before-transition', 'transition'}
         self.set_keyword_events(**kwargs)
 
@@ -953,8 +953,8 @@ class QStep(QDiv):
     def __init__(self, **kwargs):
         self.done = False
         super().__init__(**kwargs)
-        self.prop_list = ['header-nav', 'name', 'disable', 'done', 'error', 'color', 'icon', 'title', 'caption', 'prefix',
-                          'done-icon', 'done-color', 'active-icon', 'active-color', 'error-icon', 'error-color']
+        self.prop_list = {'header-nav', 'name', 'disable', 'done', 'error', 'color', 'icon', 'title', 'caption', 'prefix',
+                          'done-icon', 'done-color', 'active-icon', 'active-color', 'error-icon', 'error-color'}
 
 
 @parse_dict
@@ -965,7 +965,7 @@ class QStepperNavigation(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = []
+        self.prop_list = set()
 
 
 @parse_dict
@@ -976,7 +976,7 @@ class QSlideTransition(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['appear', 'duration']
+        self.prop_list = {'appear', 'duration'}
 
 
 @parse_dict
@@ -987,7 +987,7 @@ class QTimeline(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['side', 'layout', 'color', 'dark']
+        self.prop_list = {'side', 'layout', 'color', 'dark'}
 
 
 @parse_dict
@@ -998,7 +998,7 @@ class QTimelineEntry(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['color', 'heading', 'tag', 'icon', 'avatar', 'title', 'subtitle', 'body', 'side']
+        self.prop_list = {'color', 'heading', 'tag', 'icon', 'avatar', 'title', 'subtitle', 'body', 'side'}
 
 
 @parse_dict
@@ -1140,13 +1140,13 @@ class QEditor(QInput):
         self.kitchen_sink = False
         self.toolbar = QEditor.simple_options
         super().__init__(**kwargs)
-        self.prop_list = ['fullscreen', 'value', 'readonly', 'disable', 'square', 'flat', 'dense', 'min-height',
+        self.prop_list = {'fullscreen', 'value', 'readonly', 'disable', 'square', 'flat', 'dense', 'min-height',
                           'max-height',
                           'height', 'toolbar-outline', 'toolbar-push', 'toolbar-rounded', 'content-style',
                           'content-class',
                           'definitions', 'fonts', 'toolbar', 'toolbar-color', 'toolbar-text-color',
                           'toolbar-toggle-color',
-                          'toolbar-bg', 'toolbar-outline', 'toolbar-push', 'toolbar-rounded']
+                          'toolbar-bg', 'toolbar-outline', 'toolbar-push', 'toolbar-rounded'}
         self.allowed_events = {'input'}
         # self.set_keyword_events(**kwargs)
 
@@ -1173,14 +1173,14 @@ class QExpansionItem(_QInputBase):
 
         self.type = 'boolean'
         self.value = bool(self.value)
-        self.prop_list = ['to', 'exact', 'append', 'replace', 'active-class', 'exact-active-class', 'duration',
+        self.prop_list = {'to', 'exact', 'append', 'replace', 'active-class', 'exact-active-class', 'duration',
                           # 'default-opened',  Do not use, just set value to True: self.value = True
                           'expand-icon-toggle', 'group', 'popup', 'icon', 'expand-icon', 'label', 'label-lines',
                           'caption',
                           'caption-lines', 'header-inset-level', 'content-inset-level', 'expand-separator',
                           'switch-toggle-side',
                           'value', 'disable', 'expand-icon-class', 'dark', 'dense', 'dense-toggle', 'header-style',
-                          'header-class']
+                          'header-class'}
         self.allowed_events = {'input', 'show', 'before_show', 'hide', 'before_hide', 'escape_key'}
         self.set_keyword_events(**kwargs)
 
@@ -1206,8 +1206,8 @@ class QImg(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['transition', 'alt', 'basic', 'contain', 'position', 'ratio', 'src', 'srcset', 'sizes',
-                          'placeholder-src', 'spinner-color', 'spinner-size']
+        self.prop_list = {'transition', 'alt', 'basic', 'contain', 'position', 'ratio', 'src', 'srcset', 'sizes',
+                          'placeholder-src', 'spinner-color', 'spinner-size'}
         # Events: load, error
 
 
@@ -1219,7 +1219,7 @@ class QInnerLoading(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['transition-show', 'transition-hide', 'showing', 'color', 'size', 'dark']
+        self.prop_list = {'transition-show', 'transition-hide', 'showing', 'color', 'size', 'dark'}
 
 
 @parse_dict
@@ -1230,7 +1230,7 @@ class QParallax(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['speed', 'src', 'height']
+        self.prop_list = {'speed', 'src', 'height'}
 
 
 @parse_dict
@@ -1240,9 +1240,9 @@ class Transition(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['appear', 'appear-class', 'appear-to-class', 'appear-active-class',
+        self.prop_list = {'appear', 'appear-class', 'appear-to-class', 'appear-active-class',
                           'enter-class', 'enter-active-class', 'enter-to-class', 'leave-class',
-                          'leave-active-class', 'leave-to-class', 'duration', 'mode']
+                          'leave-active-class', 'leave-to-class', 'duration', 'mode'}
 
 
 @parse_dict
@@ -1252,9 +1252,9 @@ class TransitionGroup(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['appear', 'appear-class', 'appear-to-class', 'appear-active-class',
+        self.prop_list = {'appear', 'appear-class', 'appear-to-class', 'appear-active-class',
                           'enter-class', 'enter-active-class', 'enter-to-class', 'leave-class',
-                          'leave-active-class', 'leave-to-class', 'duration', 'mode', 'tag', 'key']
+                          'leave-active-class', 'leave-to-class', 'duration', 'mode', 'tag', 'key'}
 
 
 @parse_dict
@@ -1265,7 +1265,7 @@ class QIcon(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['name', 'color', 'size', 'left', 'right', 'tag']
+        self.prop_list = {'name', 'color', 'size', 'left', 'right', 'tag'}
 
 
 @parse_dict
@@ -1282,7 +1282,7 @@ class QSpinner(QDiv):
         self.color = 'primary'
         self.spinner_type = ''
         super().__init__(**kwargs)
-        self.prop_list = ['size', 'color', 'thickness']
+        self.prop_list = {'size', 'color', 'thickness'}
 
     async def convert_object_to_dict(self):
         if self.spinner_type in QSpinner.spinner_types:
@@ -1303,7 +1303,7 @@ class QList(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['separator', 'padding', 'bordered', 'dense', 'dark']
+        self.prop_list = {'separator', 'padding', 'bordered', 'dense', 'dark'}
 
 
 @parse_dict
@@ -1314,9 +1314,9 @@ class QItem(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['to', 'exact', 'append', 'replace', 'active-class', 'exact-active-class',
+        self.prop_list = {'to', 'exact', 'append', 'replace', 'active-class', 'exact-active-class',
                           'inset-level', 'tag', 'tabindex', 'disable', 'active', 'clickable', 'manual-focus',
-                          'focused', 'dark', 'dense']
+                          'focused', 'dark', 'dense'}
 
 
 @parse_dict
@@ -1327,7 +1327,7 @@ class QItemSection(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['avatar', 'thumbnail', 'side', 'top', 'no-wrap']
+        self.prop_list = {'avatar', 'thumbnail', 'side', 'top', 'no-wrap'}
 
 
 @parse_dict
@@ -1338,7 +1338,7 @@ class QItemLabel(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['lines', 'overline', 'caption', 'header']
+        self.prop_list = {'lines', 'overline', 'caption', 'header'}
 
 
 @parse_dict
@@ -1350,7 +1350,7 @@ class QSlideItem(QDiv):
     def __init__(self, **kwargs):
         self.reset = False
         super().__init__(**kwargs)
-        self.prop_list = ['left-color', 'right-color']
+        self.prop_list = {'left-color', 'right-color'}
         self.allowed_events = {'left', 'right', 'action', 'bottom', 'top'}
         self.set_keyword_events(**kwargs)
 
@@ -1377,7 +1377,7 @@ class QInfiniteScroll(QDiv):
         self.done = False
         self.initial = True
         super().__init__(**kwargs)
-        self.prop_list = ['offset', 'scrollTarget', 'reverse', 'disable']
+        self.prop_list = {'offset', 'scrollTarget', 'reverse', 'disable'}
         self.allowed_events = {'load'}
         self.set_keyword_events(**kwargs)
 
@@ -1402,8 +1402,8 @@ class QScrollArea(QDiv):
         self.duration = None
         super().__init__(**kwargs)
         # Offset and duration are added props to activate the setScrollPosition function
-        self.prop_list = ['delay', 'horizontal', 'thumb-style', 'content-style', 'content-active-style',
-                          'offset', 'duration']
+        self.prop_list = {'delay', 'horizontal', 'thumb-style', 'content-style', 'content-active-style',
+                          'offset', 'duration'}
 
 
     async def convert_object_to_dict(self):
@@ -1424,7 +1424,7 @@ class QScrollObserver(QDiv):
 
         self.debounce = 300
         super().__init__(**kwargs)
-        self.prop_list = ['debounce', 'horizontal']
+        self.prop_list = {'debounce', 'horizontal'}
         self.allowed_events = {'scroll'}
         self.set_keyword_events(**kwargs)
 
@@ -1439,7 +1439,7 @@ class QMarkupTable(QDiv):
 
 
         super().__init__(**kwargs)
-        self.prop_list = ['separator', 'wrap-cells', 'dense', 'dark', 'flat', 'bordered', 'square']
+        self.prop_list = {'separator', 'wrap-cells', 'dense', 'dark', 'flat', 'bordered', 'square'}
 
 
 @parse_dict
@@ -1449,7 +1449,7 @@ class QSeparator(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['spaced', 'inset', 'vertical', 'dark', 'color']
+        self.prop_list = {'spaced', 'inset', 'vertical', 'dark', 'color'}
 
 
 @parse_dict
@@ -1459,7 +1459,7 @@ class QSpace(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = []
+        self.prop_list = set()
 
 
 @parse_dict
@@ -1469,7 +1469,7 @@ class QVideo(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['src', 'ratio']
+        self.prop_list = {'src', 'ratio'}
 
 
 @parse_dict
@@ -1487,9 +1487,9 @@ class QTree(QDiv):
         self.tick_strategy = 'none'   # none | strict | leaf | leaf-filtered
         self.default_expand_all = False
         super().__init__(**kwargs)
-        self.attributes = ['tick-strategy', 'default-expand-all', 'accordion', 'nodes', 'node-key', 'label-key', 'icon',
+        self.attributes = {'tick-strategy', 'default-expand-all', 'accordion', 'nodes', 'node-key', 'label-key', 'icon',
                            'no-nodes-label', 'no-results-label', 'filter', 'filter-method', 'ticked', 'expanded', 'selected',
-                           'color', 'control-color', 'text-color', 'selected-color', 'dark', 'duration', 'no-connectors']
+                           'color', 'control-color', 'text-color', 'selected-color', 'dark', 'duration', 'no-connectors'}
         self.allowed_events = {'before', 'after', 'update:expanded', 'lazy-load', 'update:ticked', 'update:selected'}
         self.set_keyword_events(**kwargs)
         self.events = ['update:expanded', 'update:ticked', 'update:selected']
@@ -1557,8 +1557,8 @@ class QNotify(QDiv):
         # Possible position: top-left | top-right | bottom-left | bottom-right | top | bottom | left | right | center
         self.position = 'bottom-right'
         super().__init__(**kwargs)
-        self.prop_list = ['notify', 'color', 'textColor', 'message', 'html','icon', 'avatar', 'position', 'closeBtn',
-                          'timeout', 'actions', 'multiLine', 'caption', 'reply']
+        self.prop_list = {'notify', 'color', 'textColor', 'message', 'html','icon', 'avatar', 'position', 'closeBtn',
+                          'timeout', 'actions', 'multiLine', 'caption', 'reply'}
 
 
     async def convert_object_to_dict(self):
@@ -1582,13 +1582,13 @@ class QTable(QDiv):
         self.pagination = False
         self.selected = []
         super().__init__(**kwargs)
-        self.attributes = ['fullscreen', 'loading', 'columns', 'visible-columns', 'title', 'hide-header', 'hide-bottom',
+        self.attributes = {'fullscreen', 'loading', 'columns', 'visible-columns', 'title', 'hide-header', 'hide-bottom',
                            'separator', 'wrap-cells', 'no-data-label', 'no-results-label', 'loading-label',
                            'filter', 'filter-method', 'data', 'row-key', 'rows-per-page-label', 'pagination-label',
                            'pagination', 'rows-per-page-options', 'selected-rows-label', 'selection', 'selected',
                            'binary-state-sort', 'sort-method', 'color', 'grid', 'dense', 'dark', 'flat', 'bordered',
                            'square', 'table-style', 'table-class', 'table-header-style', 'table-header-class',
-                           'card-style', 'card-class', 'icon-first-page', 'con-prev-page', 'icon-next-page', 'icon-last-page']
+                           'card-style', 'card-class', 'icon-first-page', 'con-prev-page', 'icon-next-page', 'icon-last-page'}
         # Need to load: columns, data
         # separator one of  horizontal | vertical | cell | none
         self.allowed_events = {'before', 'after', 'request', 'selection', 'update:pagination', 'update:selected'}
@@ -1645,7 +1645,7 @@ class QTh(QDiv):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # position one of top-right | top-left | bottom-right | bottom-left | top | right | bottom | left
-        self.prop_list = ['props', 'auto-width']
+        self.prop_list = {'props', 'auto-width'}
         self.allowed_events = {}
         self.set_keyword_events(**kwargs)
 
@@ -1659,7 +1659,7 @@ class QTr(QDiv):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # position one of top-right | top-left | bottom-right | bottom-left | top | right | bottom | left
-        self.prop_list = ['props', 'no-hover']
+        self.prop_list = {'props', 'no-hover'}
         self.allowed_events = []
         self.set_keyword_events(**kwargs)
 
@@ -1673,7 +1673,7 @@ class QTd(QDiv):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # position one of top-right | top-left | bottom-right | bottom-left | top | right | bottom | left
-        self.prop_list = ['auto-width', 'props', 'no-hover']
+        self.prop_list = {'auto-width', 'props', 'no-hover'}
         self.allowed_events = {}
         self.set_keyword_events(**kwargs)
 # Layout components  https://quasar.dev/layout/layout
@@ -1689,7 +1689,7 @@ class QLayout(QDiv):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # position one of top-right | top-left | bottom-right | bottom-left | top | right | bottom | left
-        self.prop_list = ['view', 'container']
+        self.prop_list = {'view', 'container'}
         self.allowed_events = {'resize', 'scroll', 'scroll-height'}
         self.set_keyword_events(**kwargs)
 
@@ -1705,7 +1705,7 @@ class QHeader(QDiv):
 
         super().__init__(**kwargs)
         # position one of top-right | top-left | bottom-right | bottom-left | top | right | bottom | left
-        self.prop_list = ['reveal', 'reveal-offset', 'value', 'bordered', 'elevated']
+        self.prop_list = {'reveal', 'reveal-offset', 'value', 'bordered', 'elevated'}
         self.allowed_events = {'reveal'}
         self.set_keyword_events(**kwargs)
 
@@ -1720,7 +1720,7 @@ class QFooter(QDiv):
 
 
         super().__init__(**kwargs)
-        self.prop_list = ['reveal', 'reveal-offset', 'value', 'bordered', 'elevated']
+        self.prop_list = {'reveal', 'reveal-offset', 'value', 'bordered', 'elevated'}
         self.allowed_events = {'reveal'}
         self.set_keyword_events(**kwargs)
 
@@ -1736,9 +1736,9 @@ class QDrawer(QDiv):
         self.value = True   # Default is to show drawer
         self.mini = False
         super().__init__(**kwargs)
-        self.prop_list = ['side', 'overlay', 'mini', 'mini-to-overlay', 'breakpoint', 'behavior', 'persistent', 'show-if-above',
+        self.prop_list = {'side', 'overlay', 'mini', 'mini-to-overlay', 'breakpoint', 'behavior', 'persistent', 'show-if-above',
                           'no-swipe-open', 'no-swipe-close', 'value', 'width', 'mini-width', 'bordered', 'elevated',
-                          'content-class', 'content-style']
+                          'content-class', 'content-style'}
         self.allowed_events = {'before', 'input', 'show', 'before-show', 'hide', 'before-hide', 'on-layout', 'click', 'mouseover', 'mouseout'}
         self.set_keyword_events(**kwargs)
         self.on('input', self.default_input)
@@ -1768,7 +1768,7 @@ class QPageContainer(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = []
+        self.prop_list = set()
 
 
 @parse_dict
@@ -1779,7 +1779,7 @@ class QPage(QDiv):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['padding', 'style-fn']
+        self.prop_list = {'padding', 'style-fn'}
 
 
 @parse_dict
@@ -1791,7 +1791,7 @@ class QPageSticky(QDiv):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # position one of top-right | top-left | bottom-right | bottom-left | top | right | bottom | left
-        self.prop_list = ['expand', 'position', 'offset']
+        self.prop_list = {'expand', 'position', 'offset'}
 
 
 @parse_dict
@@ -1804,7 +1804,7 @@ class QPageScroller(QDiv):
         self.duration = 300
         super().__init__(**kwargs)
         # position one of top-right | top-left | bottom-right | bottom-left | top | right | bottom | left
-        self.prop_list = ['expand', 'position', 'offset', 'scroll-offset', 'duration']
+        self.prop_list = {'expand', 'position', 'offset', 'scroll-offset', 'duration'}
         # Required in order not have the vue update during the scroll
         self.on('click', self.default_click)
 
@@ -1823,8 +1823,8 @@ class QFab(QDiv):
         self.value = False   # Default is to show drawer
         super().__init__(**kwargs)
         # direction on of  up | right | down | left   , type one of  a | submit | button | reset
-        self.prop_list = ['direction', 'persistent', 'icon', 'active-icon', 'type', 'value', 'disable',
-                          'outline', 'push', 'flat', 'color', 'text-color', 'glossy', 'label', 'external-label', 'label-position']
+        self.prop_list = {'direction', 'persistent', 'icon', 'active-icon', 'type', 'value', 'disable',
+                          'outline', 'push', 'flat', 'color', 'text-color', 'glossy', 'label', 'external-label', 'label-position'}
         self.allowed_events = {'input', 'show', 'before-show', 'hide', 'before-hide', 'click', 'mouseover', 'mouseout'}
         self.set_keyword_events(**kwargs)
 
@@ -1842,8 +1842,8 @@ class QFabAction(QDiv):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # position one of top-right | top-left | bottom-right | bottom-left | top | right | bottom | left
-        self.prop_list = ['icon', 'type', 'to', 'replace', 'disable', 'outline', 'push', 'flat', 'color', 'text-color',
-                          'glossy', 'label', 'external-label', 'label-position']
+        self.prop_list = {'icon', 'type', 'to', 'replace', 'disable', 'outline', 'push', 'flat', 'color', 'text-color',
+                          'glossy', 'label', 'external-label', 'label-position'}
 
 @parse_dict
 class QSkeleton(QDiv):
@@ -1857,7 +1857,7 @@ class QSkeleton(QDiv):
         super().__init__(**kwargs)
         if not self.animation:
             self.animation = 'wave'
-        self.prop_list = ['tag', 'type', 'dark', 'animation', 'square', 'bordered', 'size', 'width', 'height']
+        self.prop_list = {'tag', 'type', 'dark', 'animation', 'square', 'bordered', 'size', 'width', 'height'}
 
 
 @parse_dict
@@ -1869,10 +1869,10 @@ class QPopupEdit(_QInputBase):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.prop_list = ['touch-position', 'persistent', 'separate-close-popup',
+        self.prop_list = {'touch-position', 'persistent', 'separate-close-popup',
                           'title', 'buttons', 'label-set', 'label-cancel', 'value', 'validate',
                           'fit', 'cover', 'anchor', 'self', 'disable',
-                          'content-class', 'content-style', 'color', 'offset', 'square', 'max-height', 'max-width']
+                          'content-class', 'content-style', 'color', 'offset', 'square', 'max-height', 'max-width'}
 
         self.allowed_events = {'input', 'cancel', 'save'}
         self.set_keyword_events(**kwargs)
