@@ -1,8 +1,8 @@
+from .low_latency import *
 from .htmlcomponents import *
 from .htmlcomponents import _tag_class_dict, parse_dict
 from addict import Dict
 import demjson
-from low_latency import *
 
 quasar_directives = ['v-close-popup', 'v-close-menu', 'v-ripple', 'v-model', 'v-close-dialog']
 
@@ -93,7 +93,7 @@ class _QInputBase(Input):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         if self.disable_events:
             d['events'] = []
         d['evaluate_prop'] = self.evaluate_prop
@@ -135,7 +135,7 @@ class QInputBlur(QInput):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['disable_input_event'] = True
         if 'blur' not in self.events:
             self.events.append('blur')
@@ -154,7 +154,7 @@ class QInputChange(QInput):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['disable_input_event'] = True
         try:
             d['events'].remove('input')
@@ -225,7 +225,7 @@ class QOptionGroup(_QInputBase):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['events'] = ['before', 'input']
         return d
 
@@ -268,7 +268,7 @@ class QSlider(_QInputBase):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         if self.label_suffix:
             d['attrs']['label-value'] = str(self.value) + self.label_suffix
         return d
@@ -299,7 +299,7 @@ class QRange(_QInputBase):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         if self.label_suffix:
             d['attrs']['label-value'] = str(self.value) + self.label_suffix
         return d
@@ -372,7 +372,7 @@ class QDate(_QInputBase):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         try:
             d['attrs']['events'] = self.events_date
         except:
@@ -403,7 +403,7 @@ class QCheckbox(_QInputBase):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         return d
 
 
@@ -427,7 +427,7 @@ class QToggle(_QInputBase):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         return d
 
 
@@ -776,7 +776,7 @@ class QChatMessage(QDiv):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         try:
             d.pop('text')
         except:
@@ -811,7 +811,7 @@ class QChip(QDiv):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         if self.selected is not None:
             self.on('update:selected', self.chip_select)
         else:
@@ -1157,7 +1157,7 @@ class QEditor(QInput):
             self.fonts = QEditor.fonts
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         return d
 
 
@@ -1188,7 +1188,7 @@ class QExpansionItem(_QInputBase):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         try:
             if d['attrs']['default-opened']:
                 d['value'] = True
@@ -1291,7 +1291,7 @@ class QSpinner(QDiv):
             self.html_tag = 'q-spinner'
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         return d
 
 
@@ -1357,7 +1357,7 @@ class QSlideItem(QDiv):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['reset'] = self.reset
         return d
 
@@ -1384,7 +1384,7 @@ class QInfiniteScroll(QDiv):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['done'] = self.done
         return d
 
@@ -1409,7 +1409,7 @@ class QScrollArea(QDiv):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['offset'] = self.offset
         d['duration'] = self.duration
         return d
@@ -1536,7 +1536,7 @@ class QTree(QDiv):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['default_expand_all'] = self.default_expand_all
         return d
 
@@ -1564,7 +1564,7 @@ class QNotify(QDiv):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['notify'] = self.notify
         return d
 

@@ -1,3 +1,4 @@
+from .low_latency import *
 from types import MethodType
 from addict import Dict
 import json, copy, inspect, sys, re
@@ -9,7 +10,6 @@ import asyncio
 from .tailwind import Tailwind
 import logging
 import httpx
-from low_latency import *
 
 # Dictionary for translating from tag to class
 _tag_class_dict = {}
@@ -200,7 +200,7 @@ class WebPage:
         async with scheduler() as ly:
             for c in self.components:
                 s = f'{s}{await c.to_html(indent + indent_step, indent_step, format)}'
-                ly()
+                await ly()
         s = f'{s}{block_indent}</div>{ws}'
         return s
 
@@ -215,7 +215,7 @@ class WebPage:
             for i, obj in enumerate(self.components):
                 await obj.react(self.data)
                 await ly()
-                d = obj.convert_object_to_dict()
+                d = await obj.convert_object_to_dict()
                 object_list.append(d)
                 await ly()
         return object_list
@@ -426,10 +426,10 @@ class JustpyBaseComponent(Tailwind):
     async def convert_dict_to_object(d):
         async with scheduler() as ly:
             obj = globals()[d['class_name']]()
-            ly()
+            await ly()
             for obj_prop in d['object_props']:
                 obj.add(await JustpyBaseComponent.convert_dict_to_object(obj_prop))
-                ly()
+                await ly()
             for k, v in d.items():
                 obj.__dict__[k] = v
             for k, v in d['attrs'].items():
@@ -547,7 +547,7 @@ class HTMLBaseComponent(JustpyBaseComponent):
         s = f'{block_indent}<{self.html_tag} '
         async with scheduler() as ly:
             d = await self.convert_object_to_dict()
-            ly()
+            await ly()
         for attr, value in d['attrs'].items():
             if value:
                 s = f'{s}{attr}="{value}" '
@@ -603,7 +603,7 @@ class HTMLBaseComponent(JustpyBaseComponent):
         async with scheduler() as ly:
             for s in self.scoped_slots:
                 d['scoped_slots'][s] = await self.scoped_slots[s].convert_object_to_dict()
-                ly()
+                await ly()
         if self.additional_properties:
             d['additional_properties'] = self.additional_properties
         if self.drag_options:
@@ -692,7 +692,7 @@ class Div(HTMLBaseComponent):
                 ws = ''
             s = f'{block_indent}<{self.html_tag} '
             d = await self.convert_object_to_dict()
-            ly()
+            await ly()
             for attr, value in d['attrs'].items():
                 if value:
                     s = f'{s}{attr}="{value}" '
@@ -711,7 +711,7 @@ class Div(HTMLBaseComponent):
                 pass
             for c in self.components:
                 s = f'{s}{await c.to_html(indent + indent_step, indent_step, format)}'
-                ly()
+                await ly()
             s = f'{s}{block_indent}</{self.html_tag}>{ws}'
             return s
 
@@ -727,17 +727,17 @@ class Div(HTMLBaseComponent):
                 await obj.react(self.data)
                 d = await obj.convert_object_to_dict()
                 object_list.append(d)
-                ly()
+                await ly()
         return object_list
 
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
             if hasattr(self, 'model'):
                 self.model_update()
             d['object_props'] = await self.build_list()
-            ly()
+            await ly()
         if hasattr(self, 'text'):
             self.text = str(self.text)
             d['text'] = self.text
@@ -849,7 +849,7 @@ class Input(Div):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['debounce'] = self.debounce
         d['input_type'] = self.type  # Needed for vue component updated life hook and event handler
         if self.type in ['text', 'textarea']:
@@ -891,7 +891,7 @@ class InputChangeOnly(Input):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['events'].remove('input')
         if 'change' not in d['events']:
             d['events'].append('change')
@@ -927,7 +927,7 @@ class Label(Div):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         try:
             d['attrs']['for'] = self.for_component.id
         except:
@@ -1019,7 +1019,7 @@ class Icon(Div):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['classes'] = self.classes + ' fa fa-' + self.icon
         return d
 
@@ -1107,7 +1107,7 @@ class TabGroup(Div):
         self.style = ' position: relative; overflow: hidden; ' + self.style  # overflow: hidden;
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         return d
 
 
@@ -1325,7 +1325,7 @@ class HTMLEntity(Span):
     async def convert_object_to_dict(self):
         async with scheduler() as ly:
             d = await super().convert_object_to_dict()
-            ly()
+            await ly()
         d['inner_html'] = self.entity
         return d
 
@@ -1392,7 +1392,7 @@ class AutoTable(Table):
             async with scheduler() as ly:
                 for item in headers:
                     Th(text=item, classes=self.th_classes, a=tr)
-                    ly()
+                    await ly()
                 tbody = Tbody(a=self)
                 for i, row in enumerate(self.values[1:]):
                     if i % 2 == 1:
@@ -1401,8 +1401,8 @@ class AutoTable(Table):
                         tr = Tr(classes=self.tr_odd_classes, a=tbody)
                     for item in row:
                         Td(text=item, classes=self.td_classes, a=tr)
-                        ly()
-                    ly()
+                        await ly()
+                    await ly()
 
 
 get_tag = component_by_tag

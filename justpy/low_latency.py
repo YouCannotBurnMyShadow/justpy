@@ -8,15 +8,15 @@ from typing import Optional, Callable, AsyncContextManager
 from functools import partial
 
 
-async def _default_logger_config(*args, **kwargs):
+def _default_logger_config(*args, **kwargs):
     logging.basicConfig(*args, **kwargs)
 
 logger_config = _default_logger_config
 
 
-def set_logger_config(async_callable: Callable):
+def set_logger_config(callable: Callable):
     global logger_config
-    logger_config = async_callable
+    logger_config = callable
 
 
 async def _default_logger(log_level, *args, **kwargs):

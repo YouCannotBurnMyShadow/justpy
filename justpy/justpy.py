@@ -1,3 +1,4 @@
+from .low_latency import *
 from starlette.applications import Starlette
 from starlette.responses import JSONResponse
 from starlette.responses import PlainTextResponse
@@ -18,7 +19,6 @@ from .routing import Route, SetRoute
 from .utilities import run_task, create_delayed_task
 import uvicorn, logging, uuid, sys, os, traceback, fnmatch
 from ssl import PROTOCOL_SSLv23
-from low_latency import *
 
 
 current_module = sys.modules[__name__]
@@ -80,7 +80,7 @@ component_file_list = create_component_file_list()
 template_options = {'tailwind': TAILWIND, 'quasar': QUASAR, 'quasar_version': QUASAR_VERSION, 'highcharts': HIGHCHARTS, 'aggrid': AGGRID, 'aggrid_enterprise': AGGRID_ENTERPRISE,
                     'static_name': STATIC_NAME, 'component_file_list': component_file_list, 'no_internet': NO_INTERNET}
 
-await logger_config(level=LOGGING_LEVEL, format='%(levelname)s %(module)s: %(message)s')
+logger_config(level=LOGGING_LEVEL, format='%(levelname)s %(module)s: %(message)s')
 
 
 app = Starlette(debug=DEBUG)
@@ -88,7 +88,6 @@ app.mount(STATIC_ROUTE, StaticFiles(directory=STATIC_DIRECTORY), name=STATIC_NAM
 if GZIP_MIDDLEWARE:
     app.add_middleware(GZipMiddleware)
 app.mount('/templates', StaticFiles(directory=current_dir + '/templates'), name='templates')
-app.add_middleware(GZipMiddleware)
 if SSL_KEYFILE and SSL_CERTFILE:
     app.add_middleware(HTTPSRedirectMiddleware)
 
@@ -423,10 +422,10 @@ def justpy(func=None, *, start_server=True, websockets=True, host=None, port=Non
 async def convert_dict_to_object(d):
     async with scheduler() as ly:
         obj = globals()[d['class_name']]()
-        ly()
+        await ly()
         for obj_prop in d['object_props']:
             obj.add(await convert_dict_to_object(obj_prop))
-            ly()
+            await ly()
         # combine the dictionaries
         for k,v in {**d, **d['attrs']}.items():
             if k != 'id':
