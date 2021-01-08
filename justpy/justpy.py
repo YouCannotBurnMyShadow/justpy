@@ -4,12 +4,12 @@ from starlette.responses import JSONResponse
 from starlette.responses import PlainTextResponse
 from starlette.endpoints import WebSocketEndpoint
 from starlette.endpoints import HTTPEndpoint
-from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 from starlette.config import Config
 from itsdangerous import Signer
+from .gzip_middleware import GZipMiddleware
 from .htmlcomponents import *
 from .chartcomponents import *
 from .gridcomponents import *
@@ -48,6 +48,8 @@ SSL_VERSION = config('SSL_VERSION', default=PROTOCOL_SSLv23)
 SSL_KEYFILE = config('SSL_KEYFILE', default='')
 SSL_CERTFILE = config('SSL_CERTFILE', default='')
 GZIP_MIDDLEWARE = config('GZIP_MIDDLEWARE', cast=bool, default=True)
+GZIP_MINIMUM_SIZE = config('GZIP_MINIMUM_SIZE', cast=int, default=500)
+GZIP_COMPRESSLEVEL = config('GZIP_COMPRESSLEVEL', cast=int, default=1)
 
 TEMPLATES_DIRECTORY = config('TEMPLATES_DIRECTORY', cast=str, default=current_dir + '/templates')
 STATIC_DIRECTORY = config('STATIC_DIRECTORY', cast=str, default=os.getcwd())
@@ -86,7 +88,7 @@ logger_config(level=LOGGING_LEVEL, format='%(levelname)s %(module)s: %(message)s
 app = Starlette(debug=DEBUG)
 app.mount(STATIC_ROUTE, StaticFiles(directory=STATIC_DIRECTORY), name=STATIC_NAME)
 if GZIP_MIDDLEWARE:
-    app.add_middleware(GZipMiddleware)
+    app.add_middleware(GZipMiddleware, minimum_size=GZIP_MINIMUM_SIZE, compresslevel=GZIP_COMPRESSLEVEL)
 app.mount('/templates', StaticFiles(directory=current_dir + '/templates'), name='templates')
 if SSL_KEYFILE and SSL_CERTFILE:
     app.add_middleware(HTTPSRedirectMiddleware)
