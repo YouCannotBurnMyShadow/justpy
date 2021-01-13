@@ -91,7 +91,7 @@ class _QInputBase(Input):
         return self.options
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         if self.disable_events:
@@ -126,14 +126,14 @@ class QInput(_QInputBase):
 class QInputBlur(QInput):
 
     async def before_event_handler(self, msg):
-        await log(logging.DEBUG, '%s %s %s %s %s', 'before ', self.type, msg.event_type, msg.input_type, msg)
+        await log()(logging.DEBUG, '%s %s %s %s %s', 'before ', self.type, msg.event_type, msg.input_type, msg)
         if hasattr(self, 'model'):
             self.model[0].data[self.model[1]] = msg.value
         self.value = msg.value
 
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['disable_input_event'] = True
@@ -145,14 +145,14 @@ class QInputBlur(QInput):
 class QInputChange(QInput):
 
     async def before_event_handler(self, msg):
-        await log(logging.DEBUG, '%s %s %s %s %s', 'before ', self.type, msg.event_type, msg.input_type, msg)
+        await log()(logging.DEBUG, '%s %s %s %s %s', 'before ', self.type, msg.event_type, msg.input_type, msg)
         if hasattr(self, 'model'):
             self.model[0].data[self.model[1]] = msg.value
         self.value = msg.value
 
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['disable_input_event'] = True
@@ -216,14 +216,14 @@ class QOptionGroup(_QInputBase):
 
 
     async def before_event_handler(self, msg):
-        await log(logging.DEBUG, '%s %s %s %s %s', 'before ', self.type, msg.event_type, msg.input_type, msg)
+        await log()(logging.DEBUG, '%s %s %s %s %s', 'before ', self.type, msg.event_type, msg.input_type, msg)
         if hasattr(self, 'model'):
             self.model[0].data[self.model[1]] = msg.value
         self.value = msg.value
 
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['events'] = ['before', 'input']
@@ -266,7 +266,7 @@ class QSlider(_QInputBase):
         # self.set_keyword_events(**kwargs)
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         if self.label_suffix:
@@ -297,7 +297,7 @@ class QRange(_QInputBase):
 
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         if self.label_suffix:
@@ -370,7 +370,7 @@ class QDate(_QInputBase):
 
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         try:
@@ -401,7 +401,7 @@ class QCheckbox(_QInputBase):
         # self.set_keyword_events(**kwargs)
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         return d
@@ -425,7 +425,7 @@ class QToggle(_QInputBase):
         # self.set_keyword_events(**kwargs)
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         return d
@@ -774,7 +774,7 @@ class QChatMessage(QDiv):
 
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         try:
@@ -809,7 +809,7 @@ class QChip(QDiv):
         self.selected = not self.selected
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         if self.selected is not None:
@@ -1155,7 +1155,7 @@ class QEditor(QInput):
         if self.kitchen_sink:
             self.toolbar = QEditor.kitchen_sink
             self.fonts = QEditor.fonts
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         return d
@@ -1186,7 +1186,7 @@ class QExpansionItem(_QInputBase):
 
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         try:
@@ -1289,7 +1289,7 @@ class QSpinner(QDiv):
             self.html_tag = 'q-spinner-' + self.spinner_type
         else:
             self.html_tag = 'q-spinner'
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         return d
@@ -1355,7 +1355,7 @@ class QSlideItem(QDiv):
         self.set_keyword_events(**kwargs)
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['reset'] = self.reset
@@ -1382,7 +1382,7 @@ class QInfiniteScroll(QDiv):
         self.set_keyword_events(**kwargs)
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['done'] = self.done
@@ -1407,7 +1407,7 @@ class QScrollArea(QDiv):
 
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['offset'] = self.offset
@@ -1534,7 +1534,7 @@ class QTree(QDiv):
         return self.nodes
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['default_expand_all'] = self.default_expand_all
@@ -1562,7 +1562,7 @@ class QNotify(QDiv):
 
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['notify'] = self.notify

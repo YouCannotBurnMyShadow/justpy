@@ -197,7 +197,7 @@ class WebPage:
         else:
             ws = ''
         s = f'{block_indent}<div>{ws}'
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             for c in self.components:
                 s = f'{s}{await c.to_html(indent + indent_step, indent_step, format)}'
                 await ly()
@@ -209,7 +209,7 @@ class WebPage:
 
     async def build_list(self):
         object_list = []
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             await self.react()
             await ly()
             for i, obj in enumerate(self.components):
@@ -424,7 +424,7 @@ class JustpyBaseComponent(Tailwind):
 
     @staticmethod
     async def convert_dict_to_object(d):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             obj = globals()[d['class_name']]()
             await ly()
             for obj_prop in d['object_props']:
@@ -545,7 +545,7 @@ class HTMLBaseComponent(JustpyBaseComponent):
         else:
             ws = ''
         s = f'{block_indent}<{self.html_tag} '
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await self.convert_object_to_dict()
             await ly()
         for attr, value in d['attrs'].items():
@@ -600,7 +600,7 @@ class HTMLBaseComponent(JustpyBaseComponent):
         except:
             pass
         d['scoped_slots'] = {}
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             for s in self.scoped_slots:
                 d['scoped_slots'][s] = await self.scoped_slots[s].convert_object_to_dict()
                 await ly()
@@ -684,7 +684,7 @@ class Div(HTMLBaseComponent):
         return self.components[-1]
 
     async def to_html(self, indent=0, indent_step=0, format=True):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             block_indent = ' ' * indent
             if format:
                 ws = '\n'
@@ -722,7 +722,7 @@ class Div(HTMLBaseComponent):
 
     async def build_list(self):
         object_list = []
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             for i, obj in enumerate(self.components):
                 await obj.react(self.data)
                 d = await obj.convert_object_to_dict()
@@ -731,7 +731,7 @@ class Div(HTMLBaseComponent):
         return object_list
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
             if hasattr(self, 'model'):
@@ -781,7 +781,7 @@ class Input(Div):
         return f'{self.__class__.__name__}(id: {self.id}, html_tag: {self.html_tag}, input_type: {self.type}, vue_type: {self.vue_type}, value: {self.value}, checked: {self.checked}, number of components: {num_components})'
 
     async def before_event_handler(self, msg):
-        await log(logging.DEBUG, '%s %s %s %s %s', 'before ', self.type, msg.event_type, msg.input_type, msg)
+        await log()(logging.DEBUG, '%s %s %s %s %s', 'before ', self.type, msg.event_type, msg.input_type, msg)
         if msg.event_type not in ['input', 'change', 'select']:
             return
         if msg.input_type == 'checkbox':
@@ -847,7 +847,7 @@ class Input(Div):
             self.value = update_value
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['debounce'] = self.debounce
@@ -889,7 +889,7 @@ class InputChangeOnly(Input):
     """
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['events'].remove('input')
@@ -925,7 +925,7 @@ class Label(Div):
         super().__init__(**kwargs)
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         try:
@@ -1017,7 +1017,7 @@ class Icon(Div):
         super().__init__(**kwargs)
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['classes'] = self.classes + ' fa fa-' + self.icon
@@ -1105,7 +1105,7 @@ class TabGroup(Div):
             self.wrapper_div.add(self.tabs[self.value]['tab'])
 
         self.style = ' position: relative; overflow: hidden; ' + self.style  # overflow: hidden;
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         return d
@@ -1323,7 +1323,7 @@ class HTMLEntity(Span):
         super().__init__(**kwargs)
 
     async def convert_object_to_dict(self):
-        async with scheduler() as ly:
+        async with scheduler()() as ly:
             d = await super().convert_object_to_dict()
             await ly()
         d['inner_html'] = self.entity
@@ -1389,7 +1389,7 @@ class AutoTable(Table):
             headers = self.values[0]
             thead = Thead(a=self)
             tr = Tr(a=thead)
-            async with scheduler() as ly:
+            async with scheduler()() as ly:
                 for item in headers:
                     Th(text=item, classes=self.th_classes, a=tr)
                     await ly()

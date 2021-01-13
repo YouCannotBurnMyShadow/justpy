@@ -11,12 +11,17 @@ from functools import partial
 def _default_logger_config(*args, **kwargs):
     logging.basicConfig(*args, **kwargs)
 
-logger_config = _default_logger_config
+
+_logger_config = _default_logger_config
 
 
 def set_logger_config(callable: Callable):
-    global logger_config
-    logger_config = callable
+    global _logger_config
+    _logger_config = callable
+
+
+def logger_config() -> Callable:
+    return _logger_config
 
 
 async def _default_logger(log_level, *args, **kwargs):
@@ -38,12 +43,16 @@ async def _default_logger(log_level, *args, **kwargs):
         pass
 
 
-log = _default_logger
+_log = _default_logger
 
 
 def set_logger(async_callable: Callable):
-    global log
-    log = async_callable
+    global _log
+    _log = async_callable
+
+
+def log() -> Callable:
+    return _log
 
 
 class _BasicYield:
@@ -57,12 +66,16 @@ async def _default_scheduler():
     await yield_(_BasicYield())  # can not determine coro scheduler loop
 
 
-scheduler = _default_scheduler
+_scheduler = _default_scheduler
 
 
 def set_scheduler(async_context_manager: AsyncContextManager):
-    global scheduler
-    scheduler = async_context_manager
+    global _scheduler
+    _scheduler = async_context_manager
+
+
+def scheduler() -> AsyncContextManager:
+    return _scheduler
 
 
 async def _default_thread_pool_executor(loop: Optional[asyncio.AbstractEventLoop], worker: Callable, *args, **kwargs):
@@ -70,8 +83,14 @@ async def _default_thread_pool_executor(loop: Optional[asyncio.AbstractEventLoop
     worker_with_args = partial(worker, *args, **kwargs)
     return await loop.run_in_executor(None, worker_with_args)
 
-thread_pool_executor = _default_thread_pool_executor
+
+_thread_pool_executor = _default_thread_pool_executor
+
 
 def set_thread_pool_executor(async_callable: Callable):
-    global thread_pool_executor
-    thread_pool_executor = async_callable
+    global _thread_pool_executor
+    _thread_pool_executor = async_callable
+
+
+def thread_pool_executor() -> Callable:
+    return _thread_pool_executor
